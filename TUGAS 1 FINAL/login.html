@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login SITTA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/data.js"></script>
+</head>
+<body class="login-body">
+
+<div class="login-container">
+    <div class="login-card">
+        <img src="img/logo-ut.jpg" alt="Logo UT" class="logo-login">
+
+        <h1>Selamat Datang</h1>
+        <p>Sistem Informasi Tracking & Bahan Ajar</p>
+
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+
+            <div class="login-links">
+                <button type="button" onclick="openModal('forgotModal')">Lupa Password?</button>
+            </div>
+
+            <button type="submit" class="btn-primary">Login</button>
+
+            <div class="register-link">
+                <button type="button" onclick="openModal('registerModal')">Belum punya akun?</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="forgotModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <span class="close" onclick="closeModal('forgotModal')">
+                &times;
+            </span>
+
+            <h2>Lupa Password</h2>
+        </div>
+
+        <div class="modal-body">
+            <p>
+                Jika anda lupa password, silakan hubungi Administrator SITTA Universitas Terbuka untuk melakukan reset password akun.
+            </p>
+
+            <button class="modal-btn"
+                onclick="closeModal('forgotModal')">
+                Tutup
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="modal" id="registerModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <span class="close"
+                onclick="closeModal('registerModal')">
+                &times;
+            </span>
+
+            <h2>Daftar Akun</h2>
+        </div>
+
+        <div class="modal-body">
+            <p>
+                Pendaftaran akun dilakukan melalui pihak Universitas Terbuka atau Administrator SITTA.
+            </p>
+
+            <button class="modal-btn"
+                onclick="closeModal('registerModal')">
+                Mengerti
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>

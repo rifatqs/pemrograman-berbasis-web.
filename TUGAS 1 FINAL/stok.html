@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Bahan Ajar</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/data.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">SITTA UT</div>
+
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="tracking.html">Tracking</a></li>
+    </ul>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</nav>
+
+<div class="stok-container">
+    <h1>Informasi Stok Bahan Ajar</h1>
+
+    <div class="form-tambah">
+        <input type="text" id="kodeBarang" placeholder="Kode Barang">
+        <input type="text" id="namaBarang" placeholder="Nama Barang">
+        <input type="number" id="stokBarang" placeholder="Jumlah Stok">
+
+        <div class="upload-box" id="uploadBox">
+            Drag Foto Buku di Sini
+            <input type="file" id="fotoBarang" accept="image/*">
+        </div>
+
+        <button onclick="tambahStok()">Tambah Data</button>
+    </div>
+
+    <div class="stok-grid" id="stokList"></div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>

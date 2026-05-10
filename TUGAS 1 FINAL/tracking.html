@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pengiriman</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/data.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">SITTA UT</div>
+
+    <ul class="nav-links">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="stok.html">Stok Bahan Ajar</a></li>
+    </ul>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</nav>
+
+<div class="tracking-container">
+    <h1>Tracking Pengiriman</h1>
+
+    <div class="tracking-search">
+        <input type="text" id="nomorDO" placeholder="Masukkan Nomor Delivery Order">
+        <button onclick="cariTracking()">Cari</button>
+    </div>
+
+    <div id="hasilTracking"></div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
