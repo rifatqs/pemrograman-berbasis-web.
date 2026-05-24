@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Delivery Order (DO)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app" class="container my-4">
+        <div class="dashboard-header mb-4">
+            <a href="index.html"
+                class="back-link">
+                &larr; Kembali ke Beranda
+            </a>
+            <h1 class="dashboard-title">
+                🚚 Pelacakan & Pembuatan Delivery Order
+            </h1>
+                <p class="dashboard-subtitle">
+                    Monitoring distribusi paket bahan ajar mahasiswa Universitas Terbuka
+                </p>
+    </div>
+        <div class="row g-4">
+            <!-- Sisi Kiri: Formulir Entry DO Baru -->
+            <div class="col-md-5">
+                <div class="card p-4 bg-white">
+                    <h3 class="h5 border-bottom pb-2 mb-3 text-primary">Buat Form Pengiriman Baru</h3>
+                    <form @submit.prevent="simpanDO">
+                        <!-- Nomor DO Tergenerasi Otomatis secara Reaktif -->
+                        <div class="mb-2">
+                            <label class="form-label small text-muted mb-0">Nomor DO (Otomatis)</label>
+                            <input type="text" :value="generatedDoNumber" class="form-control form-control-sm fw-bold bg-light" readonly>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small mb-0">NIM Mahasiswa</label>
+                            <input type="text" v-model="formDO.nim" class="form-control form-control-sm" placeholder="Masukkan 9 digit NIM" required>
+                            <span v-show="errorNIM" class="text-danger small" v-text="errorNIM"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small mb-0">Nama Lengkap</label>
+                            <input type="text" v-model="formDO.nama" class="form-control form-control-sm" required>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small mb-0">Layanan Ekspedisi</label>
+                            <select v-model="formDO.ekspedisi" class="form-select form-select-sm" required>
+                                <option value="">-- Pilih Ekspedisi --</option>
+                                <option v-for="e in pengirimanList" :key="e.kode" :value="e.nama">{{ e.nama }}</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small mb-0">Paket Bahan Ajar</label>
+                            <select v-model="formDO.paketKode" class="form-select form-select-sm" required>
+                                <option value="">-- Pilih Paket Atribusi --</option>
+                                <option v-for="p in paket" :key="p.kode" :value="p.kode">{{ p.kode }} - {{ p.nama }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Panel Detail Tampilan Isi Paket Khusus (Kondisional) -->
+                        <div class="p-2 mb-3 bg-light rounded border" v-if="paketTerpilih">
+                            <div class="small fw-bold text-secondary mb-1">📋 Detail Isi Komponen Paket:</div>
+                            <ul class="mb-2 ps-3 small text-muted">
+                                <li v-for="matkul in paketTerpilih.isi" :key="matkul">Kode Modul: {{ matkul }}</li>
+                            </ul>
+                            <div class="d-flex justify-content-between border-top pt-1 small">
+                                <span>Biaya Paket:</span>
+                                <span class="fw-bold text-success">Rp {{ paketTerpilih.harga.toLocaleString() }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small mb-0">Tanggal Pengiriman</label>
+                            <input type="date" v-model="formDO.tanggalKirim" class="form-control form-control-sm" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-sm btn-success w-100 py-2 fw-semibold" :disabled="!!errorNIM">
+                            🚀 Daftarkan DO Pengiriman
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sisi Kanan: Daftar Pelacakan Status DO -->
+            <div class="col-md-7">
+                <div class="card p-3 bg-white h-100">
+                    <h3 class="h5 border-bottom pb-2 mb-3 text-secondary">Daftar Manifest Pengiriman (DO Aktif)</h3>
+                    
+                    <div v-for="(detail, noDO) in tracking" :key="noDO" class="border rounded p-3 mb-3 bg-white shadow-sm">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="badge bg-primary me-2">{{ noDO }}</span>
+                                <small class="text-muted">{{ detail.tanggalKirim }}</small>
+                            </div>
+                            <span class="badge bg-warning text-dark">{{ detail.status }}</span>
+                        </div>
+                        
+                        <div class="row small g-1 mb-2">
+                            <div class="col-6"><strong>NIM:</strong> {{ detail.nim }}</div>
+                            <div class="col-6"><strong>Nama:</strong> {{ detail.nama }}</div>
+                            <div class="col-6"><strong>Kurir:</strong> {{ detail.ekspedisi }}</div>
+                            <div class="col-6"><strong>Total Tagihan:</strong> Rp {{ detail.total.toLocaleString() }}</div>
+                        </div>
+
+                        <!-- Tampilan Progress Perjalanan Logistik -->
+                        <div class="bg-light p-2 rounded border" style="font-size: 0.8rem;">
+                            <div class="fw-semibold text-muted mb-1">Histori Jalur Distribusi:</div>
+                            <div v-for="logs in detail.perjalanan" :key="logs.waktu" class="mb-1 border-bottom-dashed pb-1">
+                                <span class="text-primary">[{{ logs.waktu }}]</span> - {{ logs.keterangan }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <script src="js/tracking-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.navbar-brand {
+    font-weight: bold;
+    color: #002d62 !important;
+}
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.status-aman {
+    color: #198754;
+    font-weight: bold;
+}
+.status-menipis {
+    color: #fd7e14;
+    font-weight: bold;
+}
+.status-kosong {
+    color: #dc3545;
+    font-weight: bold;
+}
+.badge-filter {
+    background-color: #e9ecef;
+    color: #495057;
+    margin-right: 5px;
+}
+
+/* HEADER TABLE */
+
+.table thead th{
+
+    background:
+    linear-gradient(
+        135deg,
+        #002d62,
+        #004a99
+    );
+
+    color:white;
+
+    font-weight:600;
+
+    border:none;
+}
+
+/* ROW HOVER */
+
+.table tbody tr{
+
+    transition:0.25s;
+}
+
+.table tbody tr:hover{
+
+    transform:scale(1.003);
+
+    background:#eef5ff;
+}
+
+/* CARD */
+
+.card{
+
+    border:none;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,0.08);
+
+    transition:0.3s;
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+}
+
+/* BUTTON */
+
+.btn{
+
+    border-radius:10px;
+
+    font-weight:600;
+}
+
+/* TITLE */
+
+h1,h2,h3{
+
+    font-weight:700;
+}
+
+/* TABLE */
+
+.table td{
+
+    vertical-align:middle;
+}
+
+/* TIMELINE TRACKING */
+
+.border-bottom-dashed{
+
+    border-bottom:
+        1px dashed #ccc;
+}
+
+.bg-light{
+
+    background:#f8fbff !important;
+}
+
+.shadow-sm{
+
+    transition:0.3s;
+}
+
+.shadow-sm:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0,0,0,0.08) !important;
+}
+
+.card-title{
+
+    font-weight:700;
+}
+
+.card-text{
+
+    line-height:1.7;
+}
+
+/* HEADER DASHBOARD */
+
+.dashboard-header{
+
+    background:
+    linear-gradient(
+        135deg,
+        #002d62,
+        #004a99
+    );
+
+    padding:30px;
+
+    border-radius:20px;
+
+    color:white;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,0,0,0.12);
+}
+
+.dashboard-title{
+
+    margin-top:10px;
+
+    font-size:2rem;
+
+    font-weight:700;
+}
+
+.dashboard-subtitle{
+
+    opacity:0.9;
+
+    margin-top:8px;
+}
+
+.back-link{
+
+    color:#dbe9ff;
+
+    text-decoration:none;
+
+    font-size:0.95rem;
+}
+
+.back-link:hover{
+
+    color:white;
+}
