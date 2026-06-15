@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+
+Sistem Bahan Ajar UT
+
+</title>
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="assets/css/style.css">
+
+<script
+src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js">
+</script>
+
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- HEADER -->
+
+    <div class="hero-banner">
+
+        <h1>
+
+            📚 Sistem Bahan Ajar
+            
+
+        </h1>
+
+        <p>
+
+             Universitas Terbuka   
+
+        </p>
+
+    </div>
+
+    <!-- NAVIGATION -->
+
+    <div class="container mt-4">
+
+        <div class="btn-group">
+
+            <button
+
+            class="btn"
+
+            :class="
+            tab==='stok'
+            ?
+            'btn-primary'
+            :
+            'btn-outline-primary'
+            "
+
+            @click="tab='stok'">
+
+            📦 Stok Bahan Ajar
+
+            </button>
+
+            <button
+
+            class="btn"
+
+            :class="
+            tab==='tracking'
+            ?
+            'btn-success'
+            :
+            'btn-outline-success'
+            "
+
+            @click="tab='tracking'">
+
+            🚚 Tracking DO
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+
+    <div class="container mt-4">
+
+        <ba-stock-table
+
+        v-if="
+        tab==='stok'
+        "
+
+        :stok="stok"
+
+        :upbjj-list="upbjjList"
+
+        :kategori-list="kategoriList">
+
+        </ba-stock-table>
+
+        <do-tracking
+
+        v-if="
+        tab==='tracking'
+        "
+
+        :tracking="tracking"
+
+        :paket="paket"
+
+        :pengiriman-list="pengirimanList">
+
+        </do-tracking>
+
+    </div>
+
+</div>
+
+<!-- ================================= -->
+<!-- TEMPLATE STATUS -->
+<!-- ================================= -->
+
+<script
+type="text/x-template"
+id="tpl-status">
+
+<span>
+
+<span
+
+v-if="qty===0"
+
+class="badge bg-danger"
+
+:title="catatan">
+
+🔴 Kosong
+
+</span>
+
+<span
+
+v-else-if="qty<safety"
+
+class="badge bg-warning text-dark"
+
+:title="catatan">
+
+🟠 Menipis
+
+</span>
+
+<span
+
+v-else
+
+class="badge bg-success"
+
+:title="catatan">
+
+🟢 Aman
+
+</span>
+
+</span>
+
+</script>
+
+<!-- ================================= -->
+<!-- TEMPLATE STOCK -->
+<!-- ================================= -->
+
+<script
+type="text/x-template"
+id="tpl-stock">
+
+<div>
+
+<div class="dashboard-header">
+
+<h2>
+
+📦 Dashboard Stok Bahan Ajar
+
+</h2>
+
+</div>
+
+<div class="card p-3 mt-3">
+
+<div class="row g-2">
+
+<div class="col-md-3">
+
+<select
+
+class="form-select"
+
+v-model="filterUpbjj">
+
+<option value="">
+
+Semua UPBJJ
+
+</option>
+
+<option
+
+v-for="item
+in upbjjList">
+
+{{item}}
+
+</option>
+
+</select>
+
+</div>
+
+<div
+
+class="col-md-3"
+
+v-if="filterUpbjj">
+
+<select
+
+class="form-select"
+
+v-model="filterKategori">
+
+<option value="">
+
+Semua Kategori
+
+</option>
+
+<option
+
+v-for="item
+in kategoriList">
+
+{{item}}
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-2">
+
+<div class="form-check mt-2">
+
+<input
+
+class="form-check-input"
+
+type="checkbox"
+
+v-model="filterReorder">
+
+<label>
+
+Re-Order
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-2">
+
+<select
+
+class="form-select"
+
+v-model="sortBy">
+
+<option value="">
+
+Sort
+
+</option>
+
+<option value="judul">
+
+Judul
+
+</option>
+
+<option value="qty">
+
+Qty
+
+</option>
+
+<option value="harga">
+
+Harga
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-2">
+
+<button
+
+class="btn btn-secondary w-100"
+
+@click="resetFilter">
+
+Reset
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="mt-3">
+
+<button
+
+class="btn btn-primary"
+
+@click="bukaTambah">
+
+Tambah Data
+
+</button>
+
+</div>
+
+<table
+class="table table-hover mt-3">
+
+<thead>
+
+<tr>
+
+<th>Kode</th>
+
+<th>Judul</th>
+
+<th>Kategori</th>
+
+<th>UPBJJ</th>
+
+<th>Lokasi Rak</th>
+
+<th>Harga</th>
+
+<th>Qty</th>
+
+<th>Safety</th>
+
+<th>Status</th>
+
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr
+
+v-for="(item,index)
+in filteredStok"
+
+:key="item.kode">
+
+<td>
+
+{{item.kode}}
+
+</td>
+
+<td>
+
+{{item.judul}}
+
+</td>
+
+<td>
+
+{{item.kategori}}
+
+</td>
+
+<td>
+
+{{item.upbjj}}
+
+</td>
+
+<td>
+
+{{item.lokasiRak}}
+
+</td>
+
+<td>
+
+{{item.harga | rupiah}}
+
+</td>
+
+<td>
+
+{{item.qty | buah}}
+
+</td>
+
+<td>
+
+{{item.safety | buah}}
+
+</td>
+
+<td>
+
+<status-badge
+
+:qty="item.qty"
+
+:safety="item.safety"
+
+:catatan="item.catatanHTML">
+
+</status-badge>
+
+</td>
+
+<td>
+
+<button
+
+class="btn btn-warning btn-sm"
+
+@click="bukaEdit(item,index)">
+
+Edit
+
+</button>
+
+<button
+
+class="btn btn-danger btn-sm ms-1"
+
+@click="hapusData(index)">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<!-- FORM -->
+
+<div
+v-if="showForm"
+class="card p-3 mt-3">
+
+<h4>
+
+{{ editMode
+? 'Edit Data'
+: 'Tambah Data' }}
+
+</h4>
+
+<form
+@submit.prevent="
+editMode
+?
+updateData()
+:
+simpanData()
+">
+
+<div class="row">
+
+<div class="col-md-6">
+
+<label>Kode MK</label>
+
+<input
+class="form-control"
+v-model="formInput.kode">
+
+<small
+class="text-danger">
+
+{{errorKode}}
+
+</small>
+
+</div>
+
+<div class="col-md-6">
+
+<label>Judul MK</label>
+
+<input
+class="form-control"
+v-model="formInput.judul">
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>Kategori</label>
+
+<select
+class="form-select"
+v-model="formInput.kategori">
+
+<option
+v-for="item in kategoriList">
+
+{{item}}
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>UPBJJ</label>
+
+<select
+class="form-select"
+v-model="formInput.upbjj">
+
+<option
+v-for="item in upbjjList">
+
+{{item}}
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>Lokasi Rak</label>
+
+<input
+class="form-control"
+v-model="formInput.lokasiRak">
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>Harga</label>
+
+<input
+type="number"
+class="form-control"
+v-model.number="formInput.harga">
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>Jumlah Stok (Qty)</label>
+
+<input
+type="number"
+class="form-control"
+v-model.number="formInput.qty">
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>Safety Stock</label>
+
+<input
+type="number"
+class="form-control"
+v-model.number="formInput.safety">
+
+</div>
+
+<!-- Preview HTML -->
+<div class="col-md-12 mt-2">
+
+<label>Catatan</label>
+
+<textarea
+
+class="form-control"
+
+rows="3"
+
+v-model="formInput.catatanHTML"
+
+placeholder="Masukkan catatan bahan ajar...">
+
+</textarea>
+
+<small class="text-muted">
+
+</small>
+
+</div>
+
+</div>
+
+<button
+class="btn btn-success mt-3">
+
+Simpan
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</script>
+
+<!-- ================================= -->
+<!-- TEMPLATE TRACKING -->
+<!-- ================================= -->
+
+<script
+type="text/x-template"
+id="tpl-tracking">
+
+<div>
+
+<div class="dashboard-header">
+
+<h2>
+
+🚚 Tracking Delivery Order
+
+</h2>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="card p-3 mt-3">
+
+<input
+
+class="form-control"
+
+placeholder=
+"Cari Nomor DO atau NIM"
+
+v-model="keyword"
+
+@keyup.enter="cariDO"
+
+@keyup.esc="resetSearch">
+
+</div>
+
+<!-- FORM TAMBAH DO -->
+
+<div class="card p-3 mt-3">
+
+<h4>
+
+Tambah Delivery Order
+
+</h4>
+
+<form
+@submit.prevent="simpanDO">
+
+<div class="row">
+
+<div class="col-md-6">
+
+<label>
+
+Nomor DO
+
+</label>
+
+<input
+
+class="form-control"
+
+:readonly="true"
+
+:value="generatedDoNumber">
+
+</div>
+
+<div class="col-md-6">
+
+<label>
+
+NIM
+
+</label>
+
+<input
+
+class="form-control"
+
+v-model="formDO.nim">
+
+<small
+class="text-danger">
+
+{{errorNIM}}
+
+</small>
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>
+
+Nama
+
+</label>
+
+<input
+
+class="form-control"
+
+v-model="formDO.nama">
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>
+
+Ekspedisi
+
+</label>
+
+<select
+
+class="form-select"
+
+v-model="formDO.ekspedisi">
+
+<option value="">
+
+Pilih Ekspedisi
+
+</option>
+
+<option
+
+v-for="item
+in pengirimanList"
+
+:value="item.nama">
+
+{{item.nama}}
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>
+
+Paket
+
+</label>
+
+<select
+
+class="form-select"
+
+v-model="formDO.paketKode">
+
+<option value="">
+
+Pilih Paket
+
+</option>
+
+<option
+
+v-for="item
+in paket"
+
+:value="item.kode">
+
+{{item.kode}}
+-
+{{item.nama}}
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6 mt-2">
+
+<label>
+
+Tanggal Kirim
+
+</label>
+
+<input
+
+type="date"
+
+class="form-control"
+
+v-model="formDO.tanggalKirim">
+
+</div>
+
+</div>
+
+<div
+
+v-if="paketTerpilih"
+
+class="alert alert-info mt-3">
+
+<h6>
+
+Isi Paket
+
+</h6>
+
+<ul>
+
+<li
+
+v-for="isi
+in paketTerpilih.isi">
+
+{{isi}}
+
+</li>
+
+</ul>
+
+<strong>
+
+Total:
+
+{{ paketTerpilih.harga
+| rupiah }}
+
+</strong>
+
+</div>
+
+<button
+
+class="btn btn-success mt-3">
+
+Simpan DO
+
+</button>
+
+</form>
+
+</div>
+
+<!-- HASIL TRACKING -->
+
+<div
+
+v-for="(item,noDO)
+in hasilPencarian"
+
+class="card p-3 mt-3">
+
+<div
+class="d-flex
+justify-content-between">
+
+<h5>
+
+{{noDO}}
+
+</h5>
+
+<span
+class="badge bg-primary">
+
+{{item.status}}
+
+</span>
+
+</div>
+
+<p>
+
+NIM:
+{{item.nim}}
+
+</p>
+
+<p>
+
+Nama:
+{{item.nama}}
+
+</p>
+
+<p>
+
+Tanggal:
+{{item.tanggalKirim
+| tanggalID}}
+
+</p>
+
+<p>
+
+Total:
+{{item.total
+| rupiah}}
+
+</p>
+
+<hr>
+
+<h6>
+
+Progress Pengiriman
+
+</h6>
+
+<ul>
+
+<li
+
+v-for="jalan
+in item.perjalanan">
+
+{{jalan.waktu}}
+
+-
+
+{{jalan.keterangan}}
+
+</li>
+
+</ul>
+
+<div class="input-group">
+
+<input
+
+class="form-control"
+
+placeholder=
+"Tambah progress"
+
+v-model="
+progressInput[noDO]
+">
+
+<button
+
+class="btn btn-primary"
+
+@click="
+tambahProgress(noDO)
+">
+
+Tambah
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</script>
+
+<script src="js/services/api.js"></script>
+
+<script src="js/components/status-badge.js"></script>
+
+<script src="js/components/stock-table.js"></script>
+
+<script src="js/components/do-tracking.js"></script>
+
+<script src="js/components/app-modal.js"></script>
+
+<script src="js/app.js"></script>
+
+</body>
+
+</html>
